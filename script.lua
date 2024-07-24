@@ -1,35 +1,19 @@
--- LockCameraToNearestPlayerHead.lua
-
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
-local RunService = game:GetService("RunService")
 
-local function getNearestPlayer()
-    local nearestPlayer = nil
-    local shortestDistance = math.huge
-
-    local localCharacter = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local localHead = localCharacter:WaitForChild("Head")
-
+local function highlightPlayers()
     for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
-            local targetHead = player.Character.Head
-            local distance = (localHead.Position - targetHead.Position).Magnitude
-            if distance < shortestDistance then
-                nearestPlayer = player
-                shortestDistance = distance
+        local character = player.Character
+        if character then
+            local head = character:FindFirstChild("Head")
+            if head then
+                head.BrickColor = BrickColor.new("Bright red") -- Change to your desired color
             end
         end
     end
-
-    return nearestPlayer
 end
 
-RunService.RenderStepped:Connect(function()
-    local nearestPlayer = getNearestPlayer()
-    if nearestPlayer and nearestPlayer.Character and nearestPlayer.Character:FindFirstChild("Head") then
-        local targetHead = nearestPlayer.Character.Head
-        Camera.CFrame = CFrame.new(Camera.CFrame.Position, targetHead.Position)
-    end
-end)
+-- Run the highlight function
+highlightPlayers()
+
+-- Optional: Connect the function to an event if you want it to update dynamically
+Players.PlayerAdded:Connect(highlightPlayers)
