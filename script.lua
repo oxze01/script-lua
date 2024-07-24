@@ -1,3 +1,5 @@
+-- LockCameraToNearestPlayerHead.lua
+
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -7,9 +9,13 @@ local function getNearestPlayer()
     local nearestPlayer = nil
     local shortestDistance = math.huge
 
+    local localCharacter = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local localHead = localCharacter:WaitForChild("Head")
+
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
-            local distance = (LocalPlayer.Character.Head.Position - player.Character.Head.Position).Magnitude
+            local targetHead = player.Character.Head
+            local distance = (localHead.Position - targetHead.Position).Magnitude
             if distance < shortestDistance then
                 nearestPlayer = player
                 shortestDistance = distance
